@@ -115,19 +115,71 @@ def get_fallback_response(message_text: str) -> str:
     responses = FALLBACK_RESPONSES.get(response_type, FALLBACK_RESPONSES["general"])
     return random.choice(responses)
 
-def generate_honeypot_response(
-    current_message: str,
-    conversation_history: List[dict] = None,
-    scam_detected: bool = True,
-    scam_type: str = None
-) -> str:
+# Fast pattern responses for Hybrid Engine
+FAST_PATTERNS = {
+    "share_upi": "Okay, but which app should I use? PhonePe or Paytm?",
+    "click_link": "Link not opening sir. Can you resend?",
+    "urgency": "Oh no! But I am at work now. Can do after 1 hour?",
+    "verify_details": "What details you need? My name is Ramesh Kumar",
+    "payment_request": "How much amount sir? And to which number?",
+    "bank_details": "I have SBI account. Is that okay?"
+}
+
+def check_fast_patterns(text: str) -> str:
+    """Check if text matches common patterns for sub-50ms response."""
+    text_lower = text.lower()
+    
+    if "upi" in text_lower and ("share" in text_lower or "send" in text_lower):
+        return FAST_PATTERNS["share_upi"]
+    
+    if "link" in text_lower and ("click" in text_lower or "open" in text_lower):
+        return FAST_PATTERNS["click_link"]
+        
+    if "urgent" in text_lower or "immediately" in text_lower:
+        return FAST_PATTERNS["urgency"]
+        
+    if "details" in text_lower and ("verify" in text_lower or "send" in text_lower):
+        return FAST_PATTERNS["verify_details"]
+        
+    if "amount" in text_lower or "transfer" in text_lower or "rs" in text_lower:
+        return FAST_PATTERNS["payment_request"]
+        
+    if "bank" in text_lower and "account" in text_lower:
+        return FAST_PATTERNS["bank_details"]
+        
+    return None
+
+def generate_honeypot_response(current_message: str, conversation_history: list, scam_detected: bool, scam_type: str = None) -> str:
     """
-    Generate a honeypot response using LLM.
-    Falls back to rule-based responses if LLM fails.
+    Generates a response from the AI agent (honeypot persona).
+    Uses Hybrid Engine: Fast Pattern -> Fallback LLM.
+    """
+    
+    # 1. FAST PATH (Hybrid Engine)
+    fast_response = check_fast_patterns(current_message)
+    if fast_response:
+        return fast_response
+
+    # 2. SLOW PATH (LLM)
+    system_prompt = f"""
+    You are an Indian uncle named Ramesh Kumar (age 52). 
+    You are currently talking to a suspected scammer. 
+    Your goal is to waste their time and get their payment details (UPI, Bank Account).
+    
+    Current Scam Type Detected: {scam_type}
+    
+    Guidelines:
+    - Act confused and technically illiterate.
+    - Ask simple questions.
+    - Do NOT reveal you know it's a scam.
+    - If they ask for money, ask "How to send?" or "Which app?".
+    - If they send a link, say "It's not opening".
+    - Keep responses short (under 20 words).
+    - Use Indian English style ("Okay sir", "Please tell me", "I am worried").
     """
     
     # Build conversation context
-    messages = [{"role": "system", "content": HONEYPOT_SYSTEM_PROMPT}]
+    messages = [{"role": "system", "content": system_prompt}]
     
     # Add conversation history
     if conversation_history:

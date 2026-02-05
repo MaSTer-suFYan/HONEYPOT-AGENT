@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from datetime import datetime
 
 class Message(BaseModel):
@@ -30,6 +30,11 @@ class AnalyzeResponse(BaseModel):
     reply: str
     scamDetected: Optional[bool] = None
     extractedIntelligence: Optional[ExtractedIntelligence] = None
+    # Anti-Gravity / Competition Fields
+    scamAnalysis: Optional[Dict[str, Any]] = None
+    scammerProfile: Optional[Dict[str, Any]] = None
+    engagementMetrics: Optional[Dict[str, Any]] = None
+    systemStatus: Optional[Dict[str, Any]] = None
 
 class GuviCallbackPayload(BaseModel):
     sessionId: str
@@ -37,3 +42,5 @@ class GuviCallbackPayload(BaseModel):
     totalMessagesExchanged: int
     extractedIntelligence: dict
     agentNotes: str
+    # Optional competition fields for callback too if allowed
+    impactMetrics: Optional[Dict[str, Any]] = None

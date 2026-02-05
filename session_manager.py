@@ -1,7 +1,11 @@
+import threading
+import time
 from typing import Dict, Optional
 from models import ExtractedIntelligence
+import logging
 from datetime import datetime
-import threading
+
+logger = logging.getLogger(__name__)
 
 class SessionData:
     def __init__(self, session_id: str):
@@ -31,7 +35,50 @@ class SessionManager:
                 if cls._instance is None:
                     cls._instance = super().__new__(cls)
                     cls._instance.sessions: Dict[str, SessionData] = {}
+                    cls._instance._start_cleanup_loop()
         return cls._instance
+
+    def _start_cleanup_loop(self):
+        """Start a background thread to clean up inactive sessions."""
+        def cleanup_worker():
+            while True:
+                try:
+                    self._check_inactive_sessions()
+                except Exception as e:
+                    logger.error(f"Error in cleanup worker: {e}")
+                time.sleep(60)  # Check every minute
+
+        thread = threading.Thread(target=cleanup_worker, daemon=True)
+        thread.start()
+
+    def _check_inactive_sessions(self):
+        """Check for sessions inactive for > 5 minutes and send final callback."""
+        # Import here to avoid circular dependency
+        from guvi_callback import send_callback_to_guvi
+        
+        now = datetime.now()
+        timeout_seconds = 300  # 5 minutes
+        
+        # Snapshot keys to avoid modification during iteration issues
+        session_ids = list(self.sessions.keys())
+        
+        for pid in session_ids:
+            session = self.sessions.get(pid)
+            if not session:
+                continue
+            
+            elapsed = (now - session.last_activity).total_seconds()
+            
+            # If session is inactive and scam was detected but callback not sent
+            if elapsed > timeout_seconds:
+                if session.scam_detected and not session.callback_sent:
+                    logger.info(f"Session {pid} timed out. Sending final callback.")
+                    send_callback_to_guvi(session)
+                    self.mark_callback_sent(pid)
+                
+                # Optional: Remove very old sessions to free memory (e.g., > 1 hour)
+                if elapsed > 3600:
+                    self.clear_session(pid)
     
     def get_or_create_session(self, session_id: str) -> SessionData:
         """Get existing session or create new one."""
@@ -79,28 +126,40 @@ class SessionManager:
         if session:
             session.callback_sent = True
     
-    def should_send_callback(self, session_id: str) -> bool:
-        """Check if callback should be sent for this session."""
+    def should_trigger_early_callback(self, session_id: str) -> bool:
+        """
+        Smart trigger for early callback based on optimization plan.
+        Triggers if:
+        1. Useful intelligence gathered (count >= 2)
+        2. Confidence high (scam_detected) - (already true if we call this)
+        3. Max turns reached (>= 8)
+        4. Stalled (handled by background loop, but we check logic here too)
+        """
         session = self.get_session(session_id)
-        if not session:
+        if not session or session.callback_sent:
             return False
-        
-        # Send callback if:
-        # 1. Scam is detected
-        # 2. Callback hasn't been sent yet
-        # 3. We have some intelligence OR at least 3 messages exchanged
-        has_intelligence = (
-            len(session.intelligence.bankAccounts) > 0 or
-            len(session.intelligence.upiIds) > 0 or
-            len(session.intelligence.phishingLinks) > 0 or
-            len(session.intelligence.phoneNumbers) > 0
+            
+        if not session.scam_detected:
+            return False
+
+        # 1. Intelligence Threshold
+        # Count unique items across all categories
+        intel = session.intelligence
+        unique_items = (
+            len(set(intel.bankAccounts)) + 
+            len(set(intel.upiIds)) + 
+            len(set(intel.phishingLinks)) + 
+            len(set(intel.phoneNumbers))
         )
         
-        return (
-            session.scam_detected and 
-            not session.callback_sent and
-            (has_intelligence or session.message_count >= 3)
-        )
+        if unique_items >= 2:
+            return True
+            
+        # 2. Max Turns
+        if session.message_count >= 8:
+            return True
+            
+        return False
     
     def clear_session(self, session_id: str):
         """Remove a session."""
