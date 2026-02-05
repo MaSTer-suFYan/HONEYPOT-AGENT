@@ -107,6 +107,16 @@ async def analyze_message(
         message_text = message.get("text", "") if isinstance(message, dict) else str(message)
         conversation_history = body.get("conversationHistory", [])
         
+        # DEBUG: Log the FULL raw body and conversation history
+        logger.info(f"=== RAW REQUEST DEBUG ===")
+        logger.info(f"Full body keys: {body.keys()}")
+        logger.info(f"Session ID: {session_id}")
+        logger.info(f"Current message: {message}")
+        logger.info(f"Current message text: {message_text}")
+        logger.info(f"Conversation history length: {len(conversation_history)}")
+        logger.info(f"Conversation history raw: {conversation_history}")
+        logger.info(f"=== END RAW REQUEST DEBUG ===")
+        
         logger.info(f"Processing message for session {session_id}: {message_text[:100]}...")
         
         # Get or create session
