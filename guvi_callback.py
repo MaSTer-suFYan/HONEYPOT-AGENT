@@ -10,10 +10,6 @@ def send_callback_to_guvi(session: SessionData) -> bool:
     Send final intelligence to GUVI evaluation endpoint.
     Returns True if successful, False otherwise.
     """
-    # Calculate engagement duration
-    from datetime import datetime
-    duration_seconds = int((datetime.now() - session.created_at).total_seconds())
-    
     payload = {
         "sessionId": session.session_id,
         "scamDetected": session.scam_detected,
@@ -23,12 +19,7 @@ def send_callback_to_guvi(session: SessionData) -> bool:
             "upiIds": session.intelligence.upiIds,
             "phishingLinks": session.intelligence.phishingLinks,
             "phoneNumbers": session.intelligence.phoneNumbers,
-            "emailAddresses": session.intelligence.emailAddresses,
             "suspiciousKeywords": session.intelligence.suspiciousKeywords
-        },
-        "engagementMetrics": {
-            "totalMessagesExchanged": session.message_count,
-            "engagementDurationSeconds": duration_seconds
         },
         "agentNotes": session.get_notes_string()
     }
