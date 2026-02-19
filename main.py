@@ -298,7 +298,11 @@ async def analyze_message(
 
         # ── Response Generation ────────────────────────────────────────
         if scam_detected:
-            reply = generate_honeypot_response(current_message=message_text)
+            reply = generate_honeypot_response(
+                current_message=message_text,
+                turn_count=session._turn_count,
+                scam_type=scam_type or session.scam_type,
+            )
         else:
             reply = generate_confused_response(message_text)
 
