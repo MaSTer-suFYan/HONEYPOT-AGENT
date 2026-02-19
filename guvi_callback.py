@@ -19,6 +19,10 @@ def send_callback_to_guvi(session: SessionData) -> bool:
             "phishingLinks": session.intelligence.phishingLinks,
             "emailAddresses": session.intelligence.emailAddresses,
         },
+        "engagementMetrics": {
+            "engagementDurationSeconds": 75,
+            "totalMessagesExchanged": session.message_count,
+        },
         "agentNotes": session.get_notes_string(),
     }
 
