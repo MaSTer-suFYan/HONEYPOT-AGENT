@@ -8,8 +8,22 @@ Selection: scam_type → category mapping → phase-based → random from pool
 import random
 import logging
 from response_dataset import RESPONSE_DB
+from hinglish_dataset import HINGLISH_DB
 
 logger = logging.getLogger(__name__)
+
+# ─────────────────────────────────────────────────────────────────────────
+# Merge English + Hinglish datasets into one combined pool
+# ─────────────────────────────────────────────────────────────────────────
+
+COMBINED_DB = {}
+all_categories = set(list(RESPONSE_DB.keys()) + list(HINGLISH_DB.keys()))
+for cat in all_categories:
+    COMBINED_DB[cat] = {}
+    eng = RESPONSE_DB.get(cat, {})
+    hin = HINGLISH_DB.get(cat, {})
+    for phase in ["early", "middle", "late"]:
+        COMBINED_DB[cat][phase] = eng.get(phase, []) + hin.get(phase, [])
 
 # ─────────────────────────────────────────────────────────────────────────
 # Map scam types (from scam_detector.py) → response database categories
@@ -148,11 +162,11 @@ def generate_honeypot_response(current_message: str, turn_count: int = 1,
     phase = _get_phase(turn_count)
 
     # 4. Get response pool
-    category_data = RESPONSE_DB.get(category, RESPONSE_DB["general"])
+    category_data = COMBINED_DB.get(category, COMBINED_DB["general"])
     pool = category_data.get(phase, category_data.get("middle", []))
 
     if not pool:
-        pool = RESPONSE_DB["general"]["middle"]
+        pool = COMBINED_DB["general"]["middle"]
 
     response = random.choice(pool)
 
@@ -166,4 +180,4 @@ def generate_honeypot_response(current_message: str, turn_count: int = 1,
 
 def generate_confused_response(message: str) -> str:
     """Generate a confused/clarifying response for non-scam messages."""
-    return random.choice(RESPONSE_DB["general"]["early"])
+    return random.choice(COMBINED_DB["general"]["early"])
