@@ -164,31 +164,60 @@ async def analyze_message(
         logger.warning(f"Invalid API key attempt: {x_api_key}")
         raise HTTPException(status_code=401, detail="Invalid API key")
 
-    # ── Parse request body (raw + Pydantic) ────────────────────────────
-    raw_body = await request.json()
-    request_body = AnalyzeRequest(**raw_body)
-    session_id = request_body.sessionId
-
-    # Count raw conversation history items (before Pydantic filtering)
-    raw_history = raw_body.get("conversationHistory", []) or []
-    raw_history_count = len(raw_history) if isinstance(raw_history, list) else 0
+    session_id = None
 
     try:
-        message_text = request_body.message.text
+        # ── Parse raw body FIRST (always works) ────────────────────────
+        raw_body = await request.json()
+        session_id = raw_body.get("sessionId") or raw_body.get("session_id") or "unknown"
+
+        # Extract raw history from ALL possible field names
+        raw_history = (
+            raw_body.get("conversationHistory")
+            or raw_body.get("conversation_history")
+            or raw_body.get("messages")
+            or raw_body.get("history")
+            or []
+        )
+        if not isinstance(raw_history, list):
+            raw_history = []
+
+        # Extract current message text (try multiple paths)
+        raw_message = raw_body.get("message", {})
+        if isinstance(raw_message, dict):
+            message_text = (
+                raw_message.get("text")
+                or raw_message.get("content")
+                or raw_message.get("body")
+                or ""
+            )
+        elif isinstance(raw_message, str):
+            message_text = raw_message
+        else:
+            message_text = ""
+
+        # Try Pydantic parsing (may add extra validation), but DON'T fail on it
+        try:
+            request_body = AnalyzeRequest(**raw_body)
+            parsed_history = request_body.conversationHistory or []
+            if not message_text:
+                message_text = request_body.message.text
+        except Exception:
+            parsed_history = []
+
         logger.info(f"[{session_id}] Processing: {message_text[:80]}")
-        logger.info(f"[{session_id}] DEBUG: raw_history_count={raw_history_count}, parsed_history_count={len(request_body.conversationHistory or [])}")
-        logger.info(f"[{session_id}] DEBUG: raw_body keys={list(raw_body.keys())}")
-        if raw_history_count > 0:
-            logger.info(f"[{session_id}] DEBUG: first_history_item={json.dumps(raw_history[0])[:200]}")
-            logger.info(f"[{session_id}] DEBUG: last_history_item={json.dumps(raw_history[-1])[:200]}")
+        logger.info(
+            f"[{session_id}] raw_history={len(raw_history)}, "
+            f"parsed_history={len(parsed_history)}, "
+            f"keys={list(raw_body.keys())}"
+        )
 
         # ── Session (single source of truth) ───────────────────────────
         session = session_manager.get_or_create(session_id)
 
         # ── Update message count from conversation history ─────────────
-        # Use the LARGER of raw history count vs parsed history count
-        history = request_body.conversationHistory or []
-        effective_history_count = max(raw_history_count, len(history))
+        # Use the LARGER of raw vs parsed history counts
+        effective_history_count = max(len(raw_history), len(parsed_history))
         session.update_message_count_from_history(effective_history_count)
 
         # ── Scam Detection ─────────────────────────────────────────────
@@ -197,39 +226,34 @@ async def analyze_message(
             keywords = []
             scam_type = session.scam_type
         else:
-            conversation_history = [
-                {"sender": m.sender, "text": m.text, "timestamp": m.timestamp}
-                for m in history
-            ]
+            # Build history dicts from raw data (most tolerant)
+            conversation_history = []
+            for item in raw_history:
+                if isinstance(item, dict):
+                    conversation_history.append({
+                        "sender": item.get("sender", item.get("role", "")),
+                        "text": item.get("text", item.get("content", "")),
+                        "timestamp": item.get("timestamp", 0),
+                    })
             scam_detected, keywords = detect_scam(message_text, conversation_history)
             scam_type = get_scam_type(keywords) if scam_detected else None
 
         # ── Intelligence Extraction (current message + full history) ───
         current_intel = extract_all_intelligence(message_text)
 
-        # Extract from parsed history
-        for msg in history:
-            history_intel = extract_all_intelligence(msg.text)
-            current_intel = ExtractedIntelligence(
-                phoneNumbers=list(set(current_intel.phoneNumbers + history_intel.phoneNumbers)),
-                bankAccounts=list(set(current_intel.bankAccounts + history_intel.bankAccounts)),
-                upiIds=list(set(current_intel.upiIds + history_intel.upiIds)),
-                phishingLinks=list(set(current_intel.phishingLinks + history_intel.phishingLinks)),
-                emailAddresses=list(set(current_intel.emailAddresses + history_intel.emailAddresses)),
-            )
-
-        # Also extract from RAW history items (fallback for dropped Pydantic items)
-        for raw_msg in raw_history:
-            raw_text = raw_msg.get("text", "") if isinstance(raw_msg, dict) else ""
-            if raw_text:
-                raw_intel = extract_all_intelligence(raw_text)
-                current_intel = ExtractedIntelligence(
-                    phoneNumbers=list(set(current_intel.phoneNumbers + raw_intel.phoneNumbers)),
-                    bankAccounts=list(set(current_intel.bankAccounts + raw_intel.bankAccounts)),
-                    upiIds=list(set(current_intel.upiIds + raw_intel.upiIds)),
-                    phishingLinks=list(set(current_intel.phishingLinks + raw_intel.phishingLinks)),
-                    emailAddresses=list(set(current_intel.emailAddresses + raw_intel.emailAddresses)),
-                )
+        # Extract from ALL raw history items (most robust — works even if Pydantic drops items)
+        for item in raw_history:
+            if isinstance(item, dict):
+                item_text = item.get("text", item.get("content", ""))
+                if item_text:
+                    item_intel = extract_all_intelligence(item_text)
+                    current_intel = ExtractedIntelligence(
+                        phoneNumbers=list(set(current_intel.phoneNumbers + item_intel.phoneNumbers)),
+                        bankAccounts=list(set(current_intel.bankAccounts + item_intel.bankAccounts)),
+                        upiIds=list(set(current_intel.upiIds + item_intel.upiIds)),
+                        phishingLinks=list(set(current_intel.phishingLinks + item_intel.phishingLinks)),
+                        emailAddresses=list(set(current_intel.emailAddresses + item_intel.emailAddresses)),
+                    )
 
         # ── Update session state ───────────────────────────────────────
         session.scam_detected = scam_detected or session.scam_detected
@@ -254,6 +278,7 @@ async def analyze_message(
         logger.info(
             f"[{session_id}] scam={scam_detected} "
             f"msgs={response['totalMessagesExchanged']} "
+            f"turns={session._turn_count} "
             f"phones={len(session.intelligence.phoneNumbers)} "
             f"upi={len(session.intelligence.upiIds)} "
             f"bank={len(session.intelligence.bankAccounts)}"
