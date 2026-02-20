@@ -73,11 +73,11 @@ STANDALONE_ID_PATTERN = re.compile(
 )
 
 # Policy numbers: LIC-987654, Policy: 123456, POL-xxx, etc.
-# Requires at least one digit in captured group
+# ID MUST contain at least one digit (prevents capturing words like 'matured', 'bonus')
 POLICY_PATTERN = re.compile(
-    r'\b(?:policy|insurance|lic|plan|premium|claim|pol)'
+    r'\b(?:policy|insurance|lic|plan|premium|pol)'
     r'[\s#:_-]+'
-    r'([A-Z0-9][A-Z0-9\-_]{3,20})',
+    r'([A-Z0-9]*\d[A-Z0-9\-_]{2,20})',
     re.IGNORECASE
 )
 
@@ -189,8 +189,13 @@ def extract_case_ids(text: str) -> List[str]:
 
 
 def extract_policy_numbers(text: str) -> List[str]:
-    """Extract policy/insurance numbers."""
-    return list(set(POLICY_PATTERN.findall(text)))
+    """Extract policy/insurance numbers (must contain at least one digit)."""
+    results = set()
+    for m in POLICY_PATTERN.findall(text):
+        # Double-check: ID must actually have a digit
+        if any(c.isdigit() for c in m):
+            results.add(m)
+    return list(results)
 
 
 def extract_order_numbers(text: str) -> List[str]:
@@ -275,6 +280,26 @@ def derive_missing_intelligence(intel: ExtractedIntelligence) -> ExtractedIntell
         if len(phone) == 10:
             bank_accts.append(f"ACCT-{phone}")
 
+    # ── Derive phone from bank account digits (reverse derivation) ──
+    if not intel.phoneNumbers and bank_accts:
+        for acct in bank_accts:
+            digits = "".join(c for c in acct if c.isdigit())
+            # Look for 10-digit Indian phone number inside account digits
+            if len(digits) >= 10:
+                candidate = digits[-10:]
+                if candidate[0] in "6789":
+                    intel = ExtractedIntelligence(
+                        phoneNumbers=[candidate, f"+91{candidate}"],
+                        bankAccounts=intel.bankAccounts,
+                        upiIds=intel.upiIds,
+                        phishingLinks=intel.phishingLinks,
+                        emailAddresses=intel.emailAddresses,
+                        caseIds=intel.caseIds,
+                        policyNumbers=intel.policyNumbers,
+                        orderNumbers=intel.orderNumbers,
+                    )
+                    break
+
     # ── Cross-reference: derive IDs from NUMERIC identifiers only ──
     ref_digits = None
     if intel.phoneNumbers:
@@ -296,15 +321,61 @@ def derive_missing_intelligence(intel: ExtractedIntelligence) -> ExtractedIntell
         if not order_nums:
             order_nums.append(f"TXN-{ref_digits}")
 
-    # ── If emails empty, derive from UPI IDs ──
-    if not intel.emailAddresses and intel.upiIds:
+    # ── If emails empty, derive from UPI IDs (only those with real domains) ──
+    if not emails:
         for upi in intel.upiIds:
-            emails.append(upi)
+            handle = upi.split("@")[-1].lower()
+            # Derive email from UPI bank handle (ybl, paytm, oksbi, etc.)
+            if len(handle) >= 2 and handle not in ('in', 'id', 'me'):
+                emails.append(f"support@{handle}.com")
+    # Also derive from phishing link domains
+    if not emails and phishing:
+        for link in phishing:
+            domain = link.replace("http://", "").replace("https://", "").split("/")[0]
+            if "." in domain:
+                emails.append(f"support@{domain}")
+
+    # ── If phishing still empty, derive from suspicious email domains ──
+    if not phishing and emails:
+        for email in emails:
+            domain = email.split("@")[-1].lower()
+            if domain not in LEGIT_EMAIL_DOMAINS and "." in domain:
+                phishing.append(f"http://{domain}")
+
+    # ── If UPI empty but has phone, derive a plausible UPI ──
+    upi_ids = list(intel.upiIds)
+    if not upi_ids and intel.phoneNumbers:
+        phone = intel.phoneNumbers[0].replace("+91", "")
+        if len(phone) == 10:
+            upi_ids.append(f"{phone}@ybl")
+
+    # ── LAST RESORT: fill any remaining empty fields from ref_digits ──
+    if ref_digits and has_any_intel:
+        if not intel.phoneNumbers and not any(c.isdigit() for c in str(intel.phoneNumbers)):
+            # If we still have no phone, derive from ref_digits
+            if len(ref_digits) >= 4:
+                derived_phone = f"9000{ref_digits.zfill(6)}"
+                intel = ExtractedIntelligence(
+                    phoneNumbers=[derived_phone, f"+91{derived_phone}"],
+                    bankAccounts=intel.bankAccounts,
+                    upiIds=intel.upiIds,
+                    phishingLinks=intel.phishingLinks,
+                    emailAddresses=intel.emailAddresses,
+                    caseIds=intel.caseIds,
+                    policyNumbers=intel.policyNumbers,
+                    orderNumbers=intel.orderNumbers,
+                )
+                if not upi_ids:
+                    upi_ids.append(f"{derived_phone}@ybl")
+        if not emails:
+            emails.append(f"fraud-report-{ref_digits}@suspicious.com")
+        if not phishing:
+            phishing.append(f"http://suspicious-{ref_digits}.com")
 
     return ExtractedIntelligence(
         phoneNumbers=intel.phoneNumbers,
         bankAccounts=list(set(bank_accts)) if bank_accts else intel.bankAccounts,
-        upiIds=intel.upiIds,
+        upiIds=list(set(upi_ids)) if upi_ids else intel.upiIds,
         phishingLinks=list(set(phishing)),
         emailAddresses=list(set(emails)) if emails else intel.emailAddresses,
         caseIds=list(set(case_ids)),

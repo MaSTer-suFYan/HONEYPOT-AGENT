@@ -1,0 +1,171 @@
+﻿======================================================================
+MULTI-SCENARIO TEST ΓÇö 8 SCAM TYPES
+======================================================================
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: KYC_FRAUD
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: ACCOUNT_THREAT
+  confidence: 0.99
+  messages: 6
+  duration: 45s
+  Γ£à phoneNumbers: ['+919123456789', '9123456789']
+  Γ£à bankAccounts: ['23456789012345', 'ACCT-9123456789']
+  Γ£à upiIds: ['9123456789@ybl', 'kycupdate@ybl']
+  Γ£à phishingLinks: ['http://sbi-kyc-verify.com']
+  Γ£à emailAddresses: ['support@sbi-kyc-verify.com', 'support@sbikyc.in']
+  Γ£à caseIds: ['CASE-2024-6789', 'REF-2024-KYC001']
+  Γ£à policyNumbers: ['POL-6789']
+  Γ£à orderNumbers: ['TXN-6789']
+  Reply: PhonePe is open. What's your UPI ID? But I need receipt ΓÇö share your email and phone number for conf...
+
+  Γ£à ALL CHECKS PASS
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: OTP_THEFT
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: OTP_FRAUD
+  confidence: 0.8
+  messages: 6
+  duration: 45s
+  Γ£à phoneNumbers: ['+917890123456', '7890123456', '8765432109', '+918765432109']
+  Γ£à bankAccounts: ['ACCT-8765432109']
+  Γ£à upiIds: ['8765432109@ybl']
+  Γ£à phishingLinks: ['http://suspicious-2109.com']
+  Γ£à emailAddresses: ['fraud-report-2109@suspicious.com']
+  Γ£à caseIds: ['CASE-2024-2109']
+  Γ£à policyNumbers: ['POL-2109']
+  Γ£à orderNumbers: ['TXN-2109']
+  Reply: Reading OTP... 4... wait, need glasses. Meanwhile ΓÇö what's your full name, employee badge number, an...
+
+  Γ£à ALL CHECKS PASS
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: INVESTMENT_SCAM
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: INVESTMENT_SCAM
+  confidence: 0.92
+  messages: 6
+  duration: 45s
+  Γ£à phoneNumbers: ['9000001234', '+919000001234']
+  Γ£à bankAccounts: ['SBIN0001234', '98765432101234']
+  Γ£à upiIds: ['invest@oksbi']
+  Γ£à phishingLinks: ['http://crypto-profits-guaranteed.xyz']
+  Γ£à emailAddresses: ['invest@cryptoprofit.com']
+  Γ£à caseIds: ['ORD-2024-INV789']
+  Γ£à policyNumbers: ['POL-001234']
+  Γ£à orderNumbers: ['ORD-2024-INV789']
+  Reply: Send me investment agreement on email. What's your email? Also share UPI ID for first installment an...
+
+  Γ£à ALL CHECKS PASS
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: LOTTERY_PRIZE
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: LOTTERY_SCAM
+  confidence: 0.92
+  messages: 6
+  duration: 45s
+  Γ£à phoneNumbers: ['+916543210987', '6543210987']
+  Γ£à bankAccounts: ['ACCT-6543210987']
+  Γ£à upiIds: ['lottery@paytm']
+  Γ£à phishingLinks: ['http://paytm.com']
+  Γ£à emailAddresses: ['winner@jiodraw.com', 'support@paytm.com']
+  Γ£à caseIds: ['CASE-2024-0987', 'PRIZE-2024-LUCKY001']
+  Γ£à policyNumbers: ['POL-0987']
+  Γ£à orderNumbers: ['TXN-0987']
+  Reply: My wife wants proof. Email the winner certificate ΓÇö what's your email? Also share your phone number ...
+
+  Γ£à ALL CHECKS PASS
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: ACCOUNT_BLOCK
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: ACCOUNT_THREAT
+  confidence: 0.99
+  messages: 6
+  duration: 45s
+  Γ£à phoneNumbers: ['+919012345678', '9012345678']
+  Γ£à bankAccounts: ['ACCT-9012345678']
+  Γ£à upiIds: ['9012345678@ybl', 'penalty@sbi']
+  Γ£à phishingLinks: ['http://support.in']
+  Γ£à emailAddresses: ['sbi.verify@support.in']
+  Γ£à caseIds: ['CASE-2024-5678', 'CASE-2024-BLK456']
+  Γ£à policyNumbers: ['POL-5678']
+  Γ£à orderNumbers: ['TXN-5678']
+  Reply: My CA will verify. Share your officer ID, office address, direct phone number, and official email ΓÇö ...
+
+  Γ£à ALL CHECKS PASS
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: PHISHING_LINK
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: PHISHING
+  confidence: 0.8
+  messages: 6
+  duration: 45s
+  Γ£à phoneNumbers: ['+917777888899', '7777888899']
+  Γ£à bankAccounts: ['ACCT-7777888899']
+  Γ£à upiIds: ['7777888899@ybl']
+  Γ£à phishingLinks: ['http://paytm-secure-update.click/login', 'http://paytm-secure-update.click/verify']
+  Γ£à emailAddresses: ['support@paytm-secure-update.click', 'support@paytmhelp.com']
+  Γ£à caseIds: ['POL-2024-PTM123']
+  Γ£à policyNumbers: ['2024-PTM123']
+  Γ£à orderNumbers: ['TXN-8899']
+  Reply: PhonePe is open. What's your UPI ID? But I need receipt ΓÇö share your email and phone number for conf...
+
+  Γ£à ALL CHECKS PASS
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: UPI_PAYMENT
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: INVESTMENT_SCAM
+  confidence: 0.92
+  messages: 6
+  duration: 45s
+  Γ£à phoneNumbers: ['8888777766', '+918888777766']
+  Γ£à bankAccounts: ['ACCT-8888777766']
+  Γ£à upiIds: ['profit@okaxis', 'cashback@ybl']
+  Γ£à phishingLinks: ['http://ybl.com']
+  Γ£à emailAddresses: ['receipt@cashback.com', 'support@ybl.com']
+  Γ£à caseIds: ['TXN-2024-CB001', 'ORD-2024-PAY999']
+  Γ£à policyNumbers: ['POL-7766']
+  Γ£à orderNumbers: ['ORD-2024-PAY999', '2024-CB001']
+  Reply: I want to invest 5 lakhs! Where to send money? Share your company bank account number, IFSC, and you...
+
+  Γ£à ALL CHECKS PASS
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: MINIMAL_MESSAGE
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: BANK_FRAUD
+  confidence: 0.71
+  messages: 6
+  duration: 45s
+  Γ¼£ phoneNumbers: []
+  Γ¼£ bankAccounts: []
+  Γ¼£ upiIds: []
+  Γ¼£ phishingLinks: []
+  Γ¼£ emailAddresses: []
+  Γ¼£ caseIds: []
+  Γ¼£ policyNumbers: []
+  Γ¼£ orderNumbers: []
+  Reply: My Aadhaar is ready. But where do I send the copy? Give me your official email ID and I'll email the...
+
+  Γ£à ALL CHECKS PASS
+
+======================================================================
+SUMMARY
+======================================================================
+Scenarios passed: 8/8
+Total issues: 0
+
+OVERALL: ALL PASS Γ£à

@@ -102,22 +102,28 @@ def detect_scam(text: str, conversation_history: List[dict] = None) -> Tuple[boo
 
 
 def get_scam_type(keywords: List[str]) -> str:
-    """Determine the type of scam based on detected keywords."""
-    if any(kw in keywords for kw in ["kyc", "verify", "verification", "update"]):
-        return "KYC_FRAUD"
-    elif any(kw in keywords for kw in ["won", "winner", "prize", "lottery", "reward"]):
-        return "LOTTERY_SCAM"
-    elif any(kw in keywords for kw in ["blocked", "suspended", "deactivated"]):
-        return "ACCOUNT_THREAT"
-    elif any(kw in keywords for kw in ["otp", "pin", "cvv"]):
+    """Determine the type of scam based on detected keywords.
+    
+    Priority order: specific indicators first, generic ones last.
+    'verify'/'update' appear in EVERY scam type, so KYC must be checked
+    AFTER more specific types like OTP_FRAUD, ACCOUNT_THREAT, PHISHING.
+    """
+    # Most specific first
+    if any(kw in keywords for kw in ["otp", "pin", "cvv"]):
         return "OTP_FRAUD"
-    elif any(kw in keywords for kw in ["invest", "profit", "bitcoin", "crypto"]):
+    if any(kw in keywords for kw in ["won", "winner", "prize", "lottery", "reward"]):
+        return "LOTTERY_SCAM"
+    if any(kw in keywords for kw in ["invest", "profit", "bitcoin", "crypto"]):
         return "INVESTMENT_SCAM"
-    elif any(kw in keywords for kw in ["contains_url"]):
+    if any(kw in keywords for kw in ["blocked", "suspended", "deactivated", "frozen", "terminated"]):
+        return "ACCOUNT_THREAT"
+    if any(kw in keywords for kw in ["contains_url"]):
         return "PHISHING"
-    elif any(kw in keywords for kw in ["upi", "payment", "transfer", "cashback", "contains_upi"]):
+    if any(kw in keywords for kw in ["upi", "payment", "transfer", "cashback", "contains_upi"]):
         return "UPI_FRAUD"
-    elif any(kw in keywords for kw in ["bank", "account", "atm", "neft", "rtgs", "imps", "ifsc"]):
+    # KYC is generic — checked AFTER specific types
+    if any(kw in keywords for kw in ["kyc"]):
+        return "KYC_FRAUD"
+    if any(kw in keywords for kw in ["bank", "account", "atm", "neft", "rtgs", "imps", "ifsc"]):
         return "BANK_FRAUD"
-    else:
-        return "GENERAL_FRAUD"
+    return "GENERAL_FRAUD"
