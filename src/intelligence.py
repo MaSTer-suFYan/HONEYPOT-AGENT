@@ -60,9 +60,11 @@ SUSPICIOUS_TLDS = {'.xyz', '.tk', '.ml', '.ga', '.cf', '.gq', '.top', '.buzz', '
 SAFE_DOMAINS = {'google.com', 'youtube.com', 'facebook.com', 'wikipedia.org', 'github.com', 'microsoft.com', 'apple.com'}
 
 # Case/Reference IDs: REF-2024-123, Case #12345, FIR-123, etc.
+# Requires word boundary on keywords and at least one digit in captured ID
 CASE_ID_PATTERN = re.compile(
-    r'(?:case|ref|reference|fir|complaint|ticket|incident|badge|verification)[\s#:_-]*'
-    r'([A-Z][A-Z0-9\-_]{2,20})',
+    r'\b(?:case|ref|reference|fir|complaint|ticket|incident|badge|verification)'
+    r'[\s#:_-]+'
+    r'([A-Z0-9][A-Z0-9\-_]{2,20})',
     re.IGNORECASE
 )
 # Standalone alphanumeric IDs: ABC-12345, FIR-2024-001
@@ -71,15 +73,19 @@ STANDALONE_ID_PATTERN = re.compile(
 )
 
 # Policy numbers: LIC-987654, Policy: 123456, POL-xxx, etc.
+# Requires at least one digit in captured group
 POLICY_PATTERN = re.compile(
-    r'(?:policy|insurance|lic|plan|premium|claim|pol)[\s#:_-]*'
+    r'\b(?:policy|insurance|lic|plan|premium|claim|pol)'
+    r'[\s#:_-]+'
     r'([A-Z0-9][A-Z0-9\-_]{3,20})',
     re.IGNORECASE
 )
 
 # Order numbers: AMZ-12345, Order #123, ORD-xxx, etc.
+# Requires word boundary and separator between keyword and ID
 ORDER_PATTERN = re.compile(
-    r'(?:order|transaction|txn|invoice|shipment|tracking|ord|delivery|awb|consignment)[\s#:_-]*'
+    r'\b(?:order|transaction|txn|invoice|shipment|tracking|delivery|awb|consignment)'
+    r'[\s#:_-]+'
     r'([A-Z0-9][A-Z0-9\-_]{3,20})',
     re.IGNORECASE
 )
@@ -164,7 +170,11 @@ def extract_email_addresses(text: str) -> List[str]:
 
 def extract_case_ids(text: str) -> List[str]:
     """Extract case/reference IDs and standalone alphanumeric IDs."""
-    ids = set(CASE_ID_PATTERN.findall(text))
+    ids = set()
+    for m in CASE_ID_PATTERN.findall(text):
+        # Real IDs always contain at least one digit
+        if any(c.isdigit() for c in m):
+            ids.add(m)
     # Also find standalone ABC-12345 style IDs
     for m in STANDALONE_ID_PATTERN.findall(text):
         # Skip IFSC codes and known patterns
@@ -180,7 +190,12 @@ def extract_policy_numbers(text: str) -> List[str]:
 
 def extract_order_numbers(text: str) -> List[str]:
     """Extract order/transaction numbers."""
-    return list(set(ORDER_PATTERN.findall(text)))
+    results = set()
+    for m in ORDER_PATTERN.findall(text):
+        # Real order numbers always contain at least one digit
+        if any(c.isdigit() for c in m):
+            results.add(m)
+    return list(results)
 
 
 def extract_ifsc_codes(text: str) -> List[str]:
