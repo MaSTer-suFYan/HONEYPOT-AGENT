@@ -274,11 +274,8 @@ def derive_missing_intelligence(intel: ExtractedIntelligence) -> ExtractedIntell
             if "bank" in handle or "pay" in handle:
                 phishing.append(f"http://{handle}.com")
 
-    # ── Derive bank accounts from phone numbers ──
-    if not bank_accts and intel.phoneNumbers:
-        phone = intel.phoneNumbers[0].replace("+91", "")
-        if len(phone) == 10:
-            bank_accts.append(f"ACCT-{phone}")
+    # NOTE: removed phone-to-bank derivation (ACCT-{phone}) — was creating
+    # fake bank accounts from phone numbers, polluting extractedIntelligence
 
     # ── Derive phone from bank account digits (reverse derivation) ──
     if not intel.phoneNumbers and bank_accts:
