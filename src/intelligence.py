@@ -126,13 +126,22 @@ def extract_bank_accounts(text: str) -> List[str]:
     return list(set(filtered))
 
 
+# Known email handles to exclude from generic UPI matching
+_EMAIL_HANDLES = {
+    'gmail', 'yahoo', 'outlook', 'hotmail', 'live', 'protonmail',
+    'rediffmail', 'aol', 'mail', 'zoho', 'yandex', 'icloud',
+    'googlemail', 'msn',
+}
+
+
 def extract_upi_ids(text: str) -> List[str]:
     """Extract UPI IDs (name@bankhandle) — tries specific handles first, then generic."""
     upi_ids = set(UPI_PATTERN.findall(text))
     # Also try generic @word pattern (catches new/unknown bank handles)
     for m in UPI_GENERIC_PATTERN.findall(text):
+        handle = m.split('@')[1].lower()
         # Exclude if it looks like a real email (has a TLD-like extension)
-        if '.' not in m.split('@')[1]:
+        if '.' not in handle and handle not in _EMAIL_HANDLES:
             upi_ids.add(m)
     return list(upi_ids)
 

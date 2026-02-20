@@ -71,6 +71,8 @@ SCAM_TYPE_TO_CATEGORY = {
     "LOTTERY_SCAM":     "lottery_scam",
     "INVESTMENT_SCAM":  "investment_scam",
     "PHISHING":         "phishing",
+    "UPI_FRAUD":        "payment_request",
+    "BANK_FRAUD":       "account_threat",
     "GENERAL_FRAUD":    "general",
 }
 
@@ -133,7 +135,7 @@ def _detect_category(text: str) -> str:
 
     # Payment / money transfer
     if any(w in t for w in ["pay", "send money", "transfer", "amount", "rupee",
-                             "rs ", "rs.", "fee", "charge", "upi"]):
+                             "rs ", "rs.", "fee", "charge", "upi", "cashback"]):
         return "payment_request"
 
     # KYC / verification

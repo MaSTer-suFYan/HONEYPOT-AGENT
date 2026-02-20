@@ -19,7 +19,7 @@ FINANCIAL_KEYWORDS = [
     "bank", "account", "upi", "payment", "transfer", "money", "rupees", "rs",
     "balance", "transaction", "kyc", "verify", "verification", "update",
     "otp", "pin", "cvv", "card", "atm", "ifsc", "neft", "rtgs", "imps",
-    "fee", "charge", "deposit", "withdraw",
+    "fee", "charge", "deposit", "withdraw", "cashback",
 ]
 
 REWARD_KEYWORDS = [
@@ -45,12 +45,12 @@ SOCIAL_ENGINEERING_KEYWORDS = [
 ]
 
 
-def detect_scam(text: str, conversation_history: List[dict] = None) -> Tuple[bool, List[str]]:
+def detect_scam(text: str, conversation_history: List[dict] = None) -> Tuple[bool, List[str], int]:
     """
     Analyze text for scam indicators.
-    Returns (is_scam, list_of_detected_keywords).
+    Returns (is_scam, list_of_detected_keywords, scam_score).
 
-    Threshold is set to 1 — aggressive detection because all 15
+    Threshold is set to 1 — aggressive detection because all
     evaluation scenarios are confirmed scams.
     """
     text_lower = text.lower()
@@ -115,5 +115,9 @@ def get_scam_type(keywords: List[str]) -> str:
         return "INVESTMENT_SCAM"
     elif any(kw in keywords for kw in ["contains_url"]):
         return "PHISHING"
+    elif any(kw in keywords for kw in ["upi", "payment", "transfer", "cashback", "contains_upi"]):
+        return "UPI_FRAUD"
+    elif any(kw in keywords for kw in ["bank", "account", "atm", "neft", "rtgs", "imps", "ifsc"]):
+        return "BANK_FRAUD"
     else:
         return "GENERAL_FRAUD"
