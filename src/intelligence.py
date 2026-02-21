@@ -149,7 +149,16 @@ def extract_upi_ids(text: str) -> List[str]:
         # Exclude if it looks like a real email (has a TLD-like extension)
         if '.' not in handle and handle not in _EMAIL_HANDLES:
             upi_ids.add(m)
-    return list(upi_ids)
+
+    # Remove UPI candidates that are actually substrings of emails (e.g. security@sbi from security@sbi.com)
+    emails = set(EMAIL_PATTERN.findall(text))
+    filtered = set()
+    for upi in upi_ids:
+        # If this UPI is a prefix of any email, it's not a real UPI
+        is_email_prefix = any(email.startswith(upi) and len(email) > len(upi) for email in emails)
+        if not is_email_prefix:
+            filtered.add(upi)
+    return list(filtered)
 
 
 def extract_phishing_links(text: str) -> List[str]:
