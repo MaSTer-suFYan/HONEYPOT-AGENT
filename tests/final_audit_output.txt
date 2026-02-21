@@ -1,0 +1,201 @@
+﻿======================================================================
+MULTI-SCENARIO TEST ΓÇö 8 SCAM TYPES
+======================================================================
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: KYC_FRAUD
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: ACCOUNT_THREAT
+  confidence: 0.99
+  messages: 12
+  duration: 90s
+  Γ£à phoneNumbers: ['+919123456789', '9123456789']
+  Γ£à bankAccounts: ['23456789012345']
+  Γ£à upiIds: ['kycupdate@ybl', '9123456789@ybl']
+  Γ£à phishingLinks: ['http://sbi-kyc-verify.com']
+  Γ£à emailAddresses: ['support@sbikyc.in', 'support@sbi-kyc-verify.com']
+  Γ£à caseIds: ['CASE-2024-6789', 'REF-2024-KYC001']
+  Γ£à policyNumbers: ['POL-6789']
+  Γ£à orderNumbers: ['TXN-6789']
+  Reply: I'll NEFT the money. Share full bank details ΓÇö account number, IFSC, beneficiary name, branch. And e...
+
+  ISSUES (1):
+  X No probing question in reply
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: OTP_THEFT
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: OTP_FRAUD
+  confidence: 0.8
+  messages: 12
+  duration: 90s
+  Γ£à phoneNumbers: ['7890123456', '+917890123456', '+918765432109', '8765432109']
+  Γ¼£ bankAccounts: []
+  Γ£à upiIds: ['8765432109@ybl']
+  Γ£à phishingLinks: ['http://suspicious-2109.com']
+  Γ£à emailAddresses: ['fraud-report-2109@suspicious.com']
+  Γ£à caseIds: ['CASE-2024-2109']
+  Γ£à policyNumbers: ['POL-2109']
+  Γ£à orderNumbers: ['TXN-2109']
+  Reply: OTP is on screen. But I read wrong numbers last time. Share your WhatsApp ΓÇö I'll send screenshot. Wh...
+
+  ISSUES (1):
+  ΓÜá∩╕Å Empty intel fields: bankAccounts
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: INVESTMENT_SCAM
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: INVESTMENT_SCAM
+  confidence: 0.92
+  messages: 12
+  duration: 90s
+  Γ£à phoneNumbers: ['+919000101234', '9000101234']
+  Γ£à bankAccounts: ['98765432101234', 'SBIN0001234']
+  Γ£à upiIds: ['invest@oksbi']
+  Γ£à phishingLinks: ['http://crypto-profits-guaranteed.xyz']
+  Γ£à emailAddresses: ['invest@cryptoprofit.com']
+  Γ£à caseIds: ['ORD-2024-INV789']
+  Γ£à policyNumbers: ['POL-101234']
+  Γ£à orderNumbers: ['ORD-2024-INV789']
+  Reply: How do I start? Share payment details ΓÇö UPI ID and bank account. Also your official email and WhatsA...
+
+  Γ£à ALL CHECKS PASS
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: LOTTERY_PRIZE
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: LOTTERY_SCAM
+  confidence: 0.92
+  messages: 12
+  duration: 90s
+  Γ£à phoneNumbers: ['6543210987', '+916543210987']
+  Γ¼£ bankAccounts: []
+  Γ£à upiIds: ['lottery@paytm']
+  Γ£à phishingLinks: ['http://paytm.com']
+  Γ£à emailAddresses: ['support@paytm.com', 'winner@jiodraw.com']
+  Γ£à caseIds: ['CASE-2024-0987', 'PRIZE-2024-LUCKY001']
+  Γ£à policyNumbers: ['POL-0987']
+  Γ£à orderNumbers: ['TXN-0987']
+  Reply: I'll pay the tax! How much exactly? Share your UPI ID or bank account number with IFSC. Also email m...
+
+  ISSUES (1):
+  ΓÜá∩╕Å Empty intel fields: bankAccounts
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: ACCOUNT_BLOCK
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: ACCOUNT_THREAT
+  confidence: 0.99
+  messages: 12
+  duration: 90s
+  Γ£à phoneNumbers: ['+919012345678', '9012345678']
+  Γ¼£ bankAccounts: []
+  Γ£à upiIds: ['penalty@sbi', '9012345678@ybl']
+  Γ£à phishingLinks: ['http://support.in']
+  Γ£à emailAddresses: ['sbi.verify@support.in']
+  Γ£à caseIds: ['CASE-2024-BLK456', 'CASE-2024-5678']
+  Γ£à policyNumbers: ['POL-5678']
+  Γ£à orderNumbers: ['TXN-5678']
+  Reply: My CA will verify. Share your officer ID, office address, direct phone number, and official email ΓÇö ...
+
+  ISSUES (2):
+  ΓÜá∩╕Å Empty intel fields: bankAccounts
+  X No probing question in reply
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: PHISHING_LINK
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: PHISHING
+  confidence: 0.8
+  messages: 12
+  duration: 90s
+  Γ£à phoneNumbers: ['+917777888899', '7777888899']
+  Γ¼£ bankAccounts: []
+  Γ£à upiIds: ['7777888899@ybl']
+  Γ£à phishingLinks: ['http://paytm-secure-update.click/verify', 'http://paytm-secure-update.click/login']
+  Γ£à emailAddresses: ['support@paytm-secure-update.click', 'support@paytmhelp.com']
+  Γ£à caseIds: ['POL-2024-PTM123']
+  Γ£à policyNumbers: ['2024-PTM123']
+  Γ£à orderNumbers: ['TXN-8899']
+  Reply: Wife handles UPI payments. She needs your full name, UPI ID, phone number, and email before sending ...
+
+  ISSUES (2):
+  ΓÜá∩╕Å Empty intel fields: bankAccounts
+  X No probing question in reply
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: UPI_PAYMENT
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: INVESTMENT_SCAM
+  confidence: 0.92
+  messages: 12
+  duration: 90s
+  Γ£à phoneNumbers: ['+918888777766', '8888777766']
+  Γ¼£ bankAccounts: []
+  Γ£à upiIds: ['cashback@ybl', 'profit@okaxis']
+  Γ£à phishingLinks: ['http://ybl.com']
+  Γ£à emailAddresses: ['support@ybl.com', 'receipt@cashback.com']
+  Γ£à caseIds: ['TXN-2024-CB001', 'ORD-2024-PAY999']
+  Γ£à policyNumbers: ['POL-7766']
+  Γ£à orderNumbers: ['2024-CB001', 'ORD-2024-PAY999']
+  Reply: Send me investment agreement on email. What's your email? Also share UPI ID for first installment an...
+
+  ISSUES (1):
+  ΓÜá∩╕Å Empty intel fields: bankAccounts
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+SCENARIO: MINIMAL_MESSAGE
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  scamDetected: True
+  scamType: BANK_FRAUD
+  confidence: 0.71
+  messages: 12
+  duration: 90s
+  Γ¼£ phoneNumbers: []
+  Γ¼£ bankAccounts: []
+  Γ¼£ upiIds: []
+  Γ¼£ phishingLinks: []
+  Γ¼£ emailAddresses: []
+  Γ¼£ caseIds: []
+  Γ¼£ policyNumbers: []
+  Γ¼£ orderNumbers: []
+  Reply: I found my PAN card. Should I email it? Share your email address. Also what's your direct phone numb...
+
+  Γ£à ALL CHECKS PASS
+
+======================================================================
+SUMMARY
+======================================================================
+Scenarios passed: 2/8
+Total issues: 8
+
+ISSUE BREAKDOWN:
+
+  KYC_FRAUD:
+  X No probing question in reply
+
+  OTP_THEFT:
+  ΓÜá∩╕Å Empty intel fields: bankAccounts
+
+  LOTTERY_PRIZE:
+  ΓÜá∩╕Å Empty intel fields: bankAccounts
+
+  ACCOUNT_BLOCK:
+  ΓÜá∩╕Å Empty intel fields: bankAccounts
+  X No probing question in reply
+
+  PHISHING_LINK:
+  ΓÜá∩╕Å Empty intel fields: bankAccounts
+  X No probing question in reply
+
+  UPI_PAYMENT:
+  ΓÜá∩╕Å Empty intel fields: bankAccounts
+
+OVERALL: 8 ISSUES FOUND ΓÜá∩╕Å

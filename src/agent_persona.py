@@ -275,6 +275,10 @@ def generate_honeypot_response(current_message: str, turn_count: int = 1,
     if probe:
         response = f"{response} {probe}"
 
+    # Defensive: ensure reply ALWAYS contains a question mark (probing)
+    if "?" not in response:
+        response = f"{response} What is your official email ID and phone number?"
+
     logger.debug(
         f"Response selection: category={category}, phase={phase}, "
         f"lang={language}, pool_size={len(pool)}, turn={turn_count}"

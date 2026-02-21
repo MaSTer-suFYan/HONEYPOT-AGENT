@@ -48,13 +48,14 @@ async def add_process_time_header(request: Request, call_next):
 # ── Helpers ────────────────────────────────────────────────────────────
 
 def _build_agent_notes(scam_detected, scam_type, keywords, intel,
-                       red_flags_detected=None, probing_questions_asked=None):
+                       red_flags_detected=None, probing_questions_asked=None,
+                       confidence_level=0.85):
     """Build a descriptive agent notes string with red-flag analysis and probing strategy."""
     parts = []
 
     if scam_detected:
         parts.append(f"Scam Type: {scam_type or 'GENERAL_FRAUD'}")
-        parts.append(f"Confidence Level: {getattr(session, 'confidence_level', 0.85) if 'session' in dir() else 0.85}")
+        parts.append(f"Confidence Level: {confidence_level}")
 
         # Tactics identified
         tactics = []
@@ -149,6 +150,7 @@ def _build_response(session, scam_detected, scam_type, keywords, reply,
         scam_detected, scam_type, keywords, session.intelligence,
         red_flags_detected=red_flags_detected,
         probing_questions_asked=probing_questions_asked,
+        confidence_level=session.confidence_level,
     )
 
     return {
@@ -437,6 +439,7 @@ async def analyze_message(
                 all_keywords, session.intelligence,
                 red_flags_detected=getattr(session, '_red_flags', []),
                 probing_questions_asked=getattr(session, '_probing_questions', []),
+                confidence_level=session.confidence_level,
             )
             send_callback_async(session)
 
