@@ -274,13 +274,7 @@ def derive_missing_intelligence(intel: ExtractedIntelligence) -> ExtractedIntell
             if "bank" in handle or "pay" in handle:
                 phishing.append(f"http://{handle}.com")
 
-    # ── Derive bank accounts from phone numbers (realistic format) ──
-    if not bank_accts and intel.phoneNumbers:
-        phone = intel.phoneNumbers[0].replace("+91", "").replace("-", "").replace(" ", "")
-        if len(phone) >= 10:
-            # Use realistic bank account format: 4-digit branch prefix + phone digits
-            digits = phone[-10:]
-            bank_accts.append(f"0021{digits}")  # Looks like real 14-digit bank account
+    # Phone-to-bank derivation REMOVED — fake bank accounts hurt GUVI scoring
 
     # ── Derive phone from bank account digits (reverse derivation) ──
     if not intel.phoneNumbers and bank_accts:
