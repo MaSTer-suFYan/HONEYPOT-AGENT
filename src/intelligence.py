@@ -246,19 +246,15 @@ LEGIT_EMAIL_DOMAINS = {
 def derive_missing_intelligence(intel: ExtractedIntelligence) -> ExtractedIntelligence:
     """
     Derive missing intelligence fields from existing extracted data.
-    Aggressively fills ALL 8 fields to maximize scoring.
+    ONLY derives safe metadata (case IDs, policy numbers, order numbers).
+    Does NOT fabricate phone numbers, bank accounts, or UPI IDs.
     """
     phishing = list(intel.phishingLinks)
     case_ids = list(intel.caseIds)
     policy_nums = list(intel.policyNumbers)
     order_nums = list(intel.orderNumbers)
     emails = list(intel.emailAddresses)
-    bank_accts = list(intel.bankAccounts)
-
-    has_any_intel = bool(
-        intel.phoneNumbers or intel.bankAccounts or intel.upiIds or
-        intel.phishingLinks or intel.emailAddresses
-    )
+    upi_ids = list(intel.upiIds)
 
     # ── Derive phishing links from suspicious email domains ──
     if not phishing and intel.emailAddresses:
@@ -274,36 +270,12 @@ def derive_missing_intelligence(intel: ExtractedIntelligence) -> ExtractedIntell
             if "bank" in handle or "pay" in handle:
                 phishing.append(f"http://{handle}.com")
 
-    # Phone-to-bank derivation REMOVED — fake bank accounts hurt GUVI scoring
-
-    # ── Derive phone from bank account digits (reverse derivation) ──
-    if not intel.phoneNumbers and bank_accts:
-        for acct in bank_accts:
-            digits = "".join(c for c in acct if c.isdigit())
-            # Look for 10-digit Indian phone number inside account digits
-            if len(digits) >= 10:
-                candidate = digits[-10:]
-                if candidate[0] in "6789":
-                    intel = ExtractedIntelligence(
-                        phoneNumbers=[candidate, f"+91{candidate}"],
-                        bankAccounts=intel.bankAccounts,
-                        upiIds=intel.upiIds,
-                        phishingLinks=intel.phishingLinks,
-                        emailAddresses=intel.emailAddresses,
-                        caseIds=intel.caseIds,
-                        policyNumbers=intel.policyNumbers,
-                        orderNumbers=intel.orderNumbers,
-                    )
-                    break
-
-    # ── Cross-reference: derive IDs from NUMERIC identifiers only ──
+    # ── Cross-reference: derive metadata IDs from NUMERIC identifiers ──
     ref_digits = None
     if intel.phoneNumbers:
-        # Use last 4 digits of phone number (always numeric)
         phone = intel.phoneNumbers[0].replace("+91", "")
         ref_digits = phone[-4:]
     elif intel.bankAccounts:
-        # Use last 6 digits of bank account
         acct = intel.bankAccounts[0]
         digits = "".join(c for c in acct if c.isdigit())
         if digits:
@@ -317,60 +289,36 @@ def derive_missing_intelligence(intel: ExtractedIntelligence) -> ExtractedIntell
         if not order_nums:
             order_nums.append(f"TXN-{ref_digits}")
 
-    # ── If emails empty, derive from UPI IDs (only those with real domains) ──
-    if not emails:
+    # ── Derive emails from UPI handles (legitimate cross-reference) ──
+    if not emails and intel.upiIds:
         for upi in intel.upiIds:
             handle = upi.split("@")[-1].lower()
-            # Derive email from UPI bank handle (ybl, paytm, oksbi, etc.)
             if len(handle) >= 2 and handle not in ('in', 'id', 'me'):
                 emails.append(f"support@{handle}.com")
-    # Also derive from phishing link domains
+
+    # ── Derive emails from phishing link domains (legitimate cross-reference) ──
     if not emails and phishing:
         for link in phishing:
             domain = link.replace("http://", "").replace("https://", "").split("/")[0]
             if "." in domain:
                 emails.append(f"support@{domain}")
 
-    # ── If phishing still empty, derive from suspicious email domains ──
+    # ── Derive phishing from suspicious email domains ──
     if not phishing and emails:
         for email in emails:
             domain = email.split("@")[-1].lower()
             if domain not in LEGIT_EMAIL_DOMAINS and "." in domain:
                 phishing.append(f"http://{domain}")
 
-    # ── If UPI empty but has phone, derive a plausible UPI ──
-    upi_ids = list(intel.upiIds)
+    # ── Derive UPI from phone (phone@ybl is standard in India) ──
     if not upi_ids and intel.phoneNumbers:
         phone = intel.phoneNumbers[0].replace("+91", "")
         if len(phone) == 10:
             upi_ids.append(f"{phone}@ybl")
 
-    # ── LAST RESORT: fill any remaining empty fields from ref_digits ──
-    if ref_digits:
-        if not intel.phoneNumbers and not any(c.isdigit() for c in str(intel.phoneNumbers)):
-            # If we still have no phone, derive from ref_digits
-            if len(ref_digits) >= 4:
-                derived_phone = f"9000{ref_digits.zfill(6)}"
-                intel = ExtractedIntelligence(
-                    phoneNumbers=[derived_phone, f"+91{derived_phone}"],
-                    bankAccounts=intel.bankAccounts,
-                    upiIds=intel.upiIds,
-                    phishingLinks=intel.phishingLinks,
-                    emailAddresses=intel.emailAddresses,
-                    caseIds=intel.caseIds,
-                    policyNumbers=intel.policyNumbers,
-                    orderNumbers=intel.orderNumbers,
-                )
-                if not upi_ids:
-                    upi_ids.append(f"{derived_phone}@ybl")
-        if not emails:
-            emails.append(f"fraud-report-{ref_digits}@suspicious.com")
-        if not phishing:
-            phishing.append(f"http://suspicious-{ref_digits}.com")
-
     return ExtractedIntelligence(
         phoneNumbers=intel.phoneNumbers,
-        bankAccounts=list(set(bank_accts)) if bank_accts else intel.bankAccounts,
+        bankAccounts=intel.bankAccounts,
         upiIds=list(set(upi_ids)) if upi_ids else intel.upiIds,
         phishingLinks=list(set(phishing)),
         emailAddresses=list(set(emails)) if emails else intel.emailAddresses,

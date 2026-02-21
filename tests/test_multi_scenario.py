@@ -157,17 +157,18 @@ def grade_scenario(name, scenario, resp):
                     if any(garbage == v_lower for garbage in ["none", "null", "undefined", "nan"]):
                         issues.append(f"  X {field_name}: GARBAGE value '{v}'")
 
-    # 5. All 8 intel fields populated (in real scenarios)
+    # 5. Key intel fields populated (in real scenarios)
     if scenario["expect_type"]:
-        # bankAccounts excluded — not all scams mention bank details
-        required_fields = ["phoneNumbers", "upiIds", "phishingLinks", 
+        # phoneNumbers/bankAccounts excluded — not all scams contain them
+        required_fields = ["upiIds", "phishingLinks", 
                            "emailAddresses", "caseIds", "policyNumbers", "orderNumbers"]
         empty_fields = [f for f in required_fields if not intel.get(f)]
         if empty_fields:
             issues.append(f"  ⚠️ Empty intel fields: {', '.join(empty_fields)}")
-        # bankAccounts is informational only
-        if not intel.get("bankAccounts"):
-            print(f"  ⬜ bankAccounts: [] (info — no bank details in scam message)")
+        # phoneNumbers and bankAccounts are informational
+        for info_field in ["phoneNumbers", "bankAccounts"]:
+            if not intel.get(info_field):
+                print(f"  ⬜ {info_field}: [] (info — not present in scam message)")
 
     # 6. Reply quality
     reply = resp.get("reply", "")
